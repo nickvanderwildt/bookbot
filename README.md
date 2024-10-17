@@ -1,1 +1,1 @@
-Public repo for Bookbot
+BookBot is my first project!
