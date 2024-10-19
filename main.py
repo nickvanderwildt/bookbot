@@ -1,14 +1,21 @@
 def main():
     book_path = "books/frankenstein.txt"
-
     text: str = get_book_text(book_path)
-    # print(text)
-
     num_words: int = get_num_words(text)
-    print(f"{num_words} words found in the document")
-
     chars_dict: dict[str, int] = get_chars_dict(text)
-    print(chars_dict)
+    chars_sorted_list = chars_dict_to_sorted_list(chars_dict)
+
+    print(f"--- Begin report of {book_path} ---")
+    print(f"{num_words} words found in the document")
+    print()
+
+    for item in chars_sorted_list:
+        if not item["char"].isalpha():  # type: ignore
+            continue
+        print(f"The {item['char']} character was found {item['num']} times")
+
+    print()
+    print("--- End report ---")
 
 
 def get_num_words(text: str) -> int:
@@ -16,14 +23,27 @@ def get_num_words(text: str) -> int:
     return len(words)
 
 
+def sort_on(d: dict[str, int]) -> int:
+    return d["num"]
+
+
+def chars_dict_to_sorted_list(num_chars_dict: dict[str, int]) -> list[dict[str, int]]:
+    sorted_list: list[dict[str, int]] = []
+    for char in num_chars_dict:
+        sorted_list.append({"char": char, "num": num_chars_dict[char]})  # type: ignore
+    sorted_list.sort(reverse=True, key=sort_on)
+    return sorted_list
+
+
 def get_chars_dict(text: str) -> dict[str, int]:
-    chars_dict: dict[str, int] = {}
-    for char in text.lower():
-        if char in chars_dict:
-            chars_dict[char] += 1
+    chars: dict[str, int] = {}
+    for c in text:
+        lowered = c.lower()
+        if lowered in chars:
+            chars[lowered] += 1
         else:
-            chars_dict[char] = 1
-    return chars_dict
+            chars[lowered] = 1
+    return chars
 
 
 def get_book_text(path: str) -> str:
